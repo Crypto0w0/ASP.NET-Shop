@@ -1,0 +1,72 @@
+﻿@model ProfileViewModel
+
+<h2>Кабінет користувача</h2>
+
+<p><strong>Ім'я:</strong> @Model.User.Name</p>
+<p><strong>Email:</strong> @Model.User.Email</p>
+<p><strong>Дата народження:</strong> @Model.User.BirthDate.ToShortDateString()</p>
+
+<a class="btn btn-outline-primary" href="/Account/ChangePassword">Змінити пароль</a>
+
+@functions {
+    string FormatDate(DateTime date)
+    {
+        var now = DateTime.Now;
+        var diff = now.Date - date.Date;
+
+        if (diff.Days == 0)
+            return date.ToString("HH:mm");
+        else if (diff.Days == 1)
+            return "вчора";
+        else
+            return $"{diff.Days} днів тому";
+    }
+}
+
+<div class="feedback-list">
+    @foreach (var fb in Model.Feedbacks)
+    {
+        <div class="feedback-item @(fb.DeletedAt != null ? "deleted" : "")">
+            <div class="rating">
+                @{
+                    int fullStars = fb.Rating;
+                    int emptyStars = 5 - fullStars;
+                }
+                @for (int i = 0; i < fullStars; i++)
+                {
+                    <span>★</span>
+                }
+                @for (int i = 0; i < emptyStars; i++)
+                {
+                    <span>☆</span>
+                }
+            </div>
+
+            <p>@fb.Comment</p>
+
+            <small>
+                Створено: @FormatDate(fb.CreatedAt)
+                @if (fb.DeletedAt != null)
+                {
+                    <span> | Видалено: @fb.DeletedAt?.ToString("dd.MM.yyyy HH:mm")</span>
+                }
+            </small>
+        </div>
+    }
+</div>
+
+<style>
+    .deleted {
+        opacity: 0.5;
+        text-decoration: line-through;
+    }
+
+    .rating span {
+        color: gold;
+        font-size: 18px;
+        margin-right: 2px;
+    }
+</style>
+
+
+

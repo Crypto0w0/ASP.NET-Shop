@@ -1,0 +1,18 @@
+﻿@model ASP.Models.LoginViewModel
+
+<form asp-action="Login" method="post">
+    <input asp-for="Identifier" placeholder="Email / Ім'я / Дата" class="form-control" />
+    <input asp-for="Password" type="password" placeholder="Пароль" class="form-control" />
+
+    <div id="restoreFields" style="display: none;">
+        <input asp-for="RestoreDate" type="date" class="form-control" placeholder="Дата реєстрації" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Увійти</button>
+    <a href="#" class="btn btn-link" onclick="document.getElementById('restoreFields').style.display='block'">Відновити</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

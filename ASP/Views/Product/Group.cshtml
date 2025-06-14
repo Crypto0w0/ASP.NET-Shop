@@ -1,0 +1,103 @@
+﻿@model List<ASP.Models.Product>
+@{
+    var priceLimits = ViewBag.PriceLimits as List<decimal>;
+    int? selectedPrice = ViewBag.SelectedPrice as int?;
+}
+
+<div style="display: flex;">
+    <aside style="width: 200px; padding: 10px; border-right: 1px solid #ccc;">
+        <h4>За ціною:</h4>
+        <form method="get" asp-action="Group">
+            @if (priceLimits != null)
+            {
+                foreach (var price in priceLimits)
+                {
+                    <div>
+                        <label>
+                            <input type="radio" name="maxPrice" value="@price" @(selectedPrice == price ? "checked" : "") onchange="this.form.submit()" />
+                            до @price грн
+                        </label>
+                    </div>
+                }
+            }
+        </form>
+    </aside>
+
+    <main style="flex-grow: 1; padding: 10px;">
+        <h2>Товари</h2>
+        @if (Model.Count == 0)
+        {
+            <p>Немає товарів для обраної ціни.</p>
+        }
+        else
+        {
+            <div style="display: flex; flex-wrap: wrap;">
+                @foreach (var item in Model)
+                {
+                    <div style="width: 200px; margin: 10px; padding: 10px; border: 1px solid #ccc; display: flex; flex-direction: column; justify-content: space-between;">
+                        <strong>@item.Name</strong><br />
+                        Ціна: @item.Price грн<br />
+                        Кількість: @item.Stock<br />
+                        @if (!string.IsNullOrEmpty(item.ImagePath))
+                        {
+                            <img src="@item.ImagePath" alt="@item.Name" style="width:100%; height: 150px; object-fit: cover; margin-bottom: 10px;" />
+                        }
+
+                        <div style="max-height: 120px; overflow-y: auto; border-top: 1px solid #ddd; padding-top: 5px; margin-top: 5px;">
+                            <h5>Відгуки:</h5>
+                            @if (item.Feedbacks != null && item.Feedbacks.Any())
+                            {
+                                foreach (var fb in item.Feedbacks)
+                                {
+                                    <div style="margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 5px;">
+                                        @{
+                                            int fullStars = (int)Math.Floor((double)fb.Rating);
+                                            int emptyStars = 5 - fullStars;
+                                        }
+                                        <div>
+                                            @for (int i = 0; i < fullStars; i++)
+                                            {
+                                                <i class="fa fa-star" style="color: gold;"></i>
+                                            }
+                                            @for (int i = 0; i < emptyStars; i++)
+                                            {
+                                                <i class="fa fa-star-o" style="color: gold;"></i>
+                                            }
+                                        </div>
+                                        <div>@fb.Comment</div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p>Відгуків немає.</p>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div>
+            <h3>Вас також може зацікавити</h3>
+            <div class="recommended-grid">
+                @foreach (var product in (List<Product>)ViewBag.RecommendedProducts)
+                {
+                    <div class="product-card" title="@product.Description">
+                        <img src="@product.ImagePath" alt="@product.Name" />
+                        <div class="product-info">
+                            <h4>@product.Name</h4>
+                            <p><strong>Ціна:</strong> @product.Price грн</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </main>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+}
+
+
