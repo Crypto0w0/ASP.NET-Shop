@@ -108,7 +108,7 @@ namespace ASP.Controllers
 
             PasswordHelper.CreatePasswordHash(model.NewPassword, out var newHash, out var newSalt);
             user.PasswordHash = newHash;
-            user.PasswordSalt = newSalt;
+            user.PasswordSalt = //new salt;
 
             _context.SaveChanges();
 
